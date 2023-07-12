@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../chatting/chat/message.dart';
+import '../chatting/chat/new_message.dart';
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -48,38 +51,16 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore
-            .instance.collection('chats/uST9d4GWkbZHPomcmaYk/message')
-          .snapshots(),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!snapshot.hasData) {
-            // 데이터가 없는 경우 처리
-            return Center(
-              child: Text('No data available'),
-            );
-          }
-          final docs = snapshot.data!.docs;
-          return ListView.builder(
-              itemCount: docs.length,
-              itemBuilder: (context, index) {
-                return Container (
-                  padding: EdgeInsets.all(8),
-                  child: Text(docs[index]['text'],
-                  style: TextStyle(fontSize: 20.0),
-                  ),
-                );
-              }
-
-          );
-        },
+      body: Container(
+        child: Column(
+          children: [
+            Expanded(
+                child: Messages(),
+            ),
+            NewMessage(),
+          ],
+        ),
       )
-      );
+    );
   }
 }
